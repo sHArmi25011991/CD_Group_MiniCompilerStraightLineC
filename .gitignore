@@ -53,3 +53,13 @@ dkms.conf
 
 # debug information files
 *.dwo
+
+compiler
+compiler.exe
+src/lex.yy.c
+src/parser.tab.c
+src/parser.tab.h
+output.asm
+*.o
+.vscode/
+*.swp
