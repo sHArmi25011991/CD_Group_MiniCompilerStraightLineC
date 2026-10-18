@@ -12,7 +12,6 @@ https://github.com/sHArmi25011991/CD_Group_MiniCompilerStraightLineC
 
 ## Build
 pacman -S --needed mingw-w64-ucrt-x86_64-gcc flex bison make
-make
 
 ## Run
 ./compiler tests/correct02.c -tokens
