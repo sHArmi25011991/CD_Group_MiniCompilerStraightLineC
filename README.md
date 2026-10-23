@@ -11,7 +11,7 @@ A small, working mini-compiler built with Flex and Bison under MSYS2 UCRT64.
 
 ---
 
-**Project Phases:**
+### Project Phases
 
 **Phase 1: Front End (Lexer + Parser)**
 - Generated a lexical analyzer using Flex.
@@ -29,32 +29,38 @@ A small, working mini-compiler built with Flex and Bison under MSYS2 UCRT64.
 
 ---
 
-**Prerequisites:**
+### Prerequisites
+
 To build and run the compiler, open the MSYS2 UCRT64 terminal. First, install the required tools (only once) by running:
+
 ```bash
 pacman -S --needed mingw-w64-ucrt-x86_64-gcc flex bison make
-Build:
+```
+
+### Build
+
 To build the compiler, run:
 
-bash
+```bash
 make
-Run:
+```
+
+### Run
+
 To run the compiler on a test file and see all stages, run:
 
-bash
+```bash
 ./compiler tests/correct03.c -tokens -symtab -3ac -asm
-Available Options:
+```
 
--tokens : print the token stream
+### Available Options
 
--symtab : print the symbol table
+- `-tokens` : print the token stream
+- `-symtab` : print the symbol table
+- `-3ac`    : print the Three-Address Code
+- `-asm`    : print the R0-R3 assembly output
 
--3ac : print the Three-Address Code
+### Test Files
 
--asm : print the R0-R3 assembly output
-
-Test Files:
-
-tests/correct01.c ... correct05.c — Accepted
-
-tests/error01.c ... error03.c — Rejected
+- `tests/correct01.c` ... `correct05.c` — Accepted
+- `tests/error01.c` ... `error03.c` — Rejected
