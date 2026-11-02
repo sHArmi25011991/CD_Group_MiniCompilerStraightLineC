@@ -1,5 +1,4 @@
 # A Mini Compiler for Straight-Line C
-
 A small, working mini-compiler built with Flex and Bison under MSYS2 UCRT64.
 
 **Repository:** https://github.com/sHArmi25011991/CD_Group_MiniCompilerStraightLineC
