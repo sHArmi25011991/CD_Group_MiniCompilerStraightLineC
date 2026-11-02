@@ -4,7 +4,7 @@
 #include <string.h>
 #include "ir.h"
 #include "codegen.h"
-#include "opt.h"       /* <--- নতুন */
+#include "opt.h"       
 
 int  yylex(void);
 void yyerror(const char *s);
@@ -13,7 +13,7 @@ extern int lineno;
 extern FILE *yyin;
 extern int emit_3ac;
 extern int emit_asm;
-extern int emit_opt;   /* <--- নতুন */
+extern int emit_opt;   
 
 typedef struct {
     char name[64];
@@ -93,7 +93,7 @@ static void new_temp_name(char *buf) {
 program:
       stmt_list
       {
-          if (emit_opt) optimize_ir(&ir);  /* <--- নতুন */
+          if (emit_opt) optimize_ir(&ir);  
 
           if (emit_3ac) {
               printf("THREE-ADDRESS CODE\n------------------\n");
