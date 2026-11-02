@@ -41,6 +41,7 @@ void generate_assembly(const IRList *ir) {
 
     for (int i = 0; i < ir->count; i++) {
         const IRInstr *ins = &ir->items[i];
+        int is_dead = (strcmp(ins->dest, "dead") == 0);
 
         if (ins->type == IR_ASSIGN) {
             int r1 = find_in_reg(ins->arg1);
@@ -50,8 +51,10 @@ void generate_assembly(const IRList *ir) {
                 printf("MOV R%d, %s\n", r1, ins->arg1);
                 put_in_reg(r1, ins->arg1);
             }
-            printf("MOV %s, R%d\n", ins->dest, r1);
-            put_in_reg(r1, ins->dest);
+            if (!is_dead) {
+                printf("MOV %s, R%d\n", ins->dest, r1);
+                put_in_reg(r1, ins->dest);
+            }
         } else {
             int r1 = find_in_reg(ins->arg1);
             if (r1 < 0) {
@@ -72,8 +75,11 @@ void generate_assembly(const IRList *ir) {
                 ins->op == '-' ? "SUB" :
                 ins->op == '*' ? "MUL" : "DIV";
             printf("%s R%d, R%d\n", mnemonic, r1, r2);
+            
             clear_reg(r2);
-            put_in_reg(r1, ins->dest);
+            if (!is_dead) {
+                put_in_reg(r1, ins->dest);
+            }
         }
     }
 }
