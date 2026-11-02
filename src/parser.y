@@ -4,6 +4,7 @@
 #include <string.h>
 #include "ir.h"
 #include "codegen.h"
+#include "opt.h"       /* <--- নতুন */
 
 int  yylex(void);
 void yyerror(const char *s);
@@ -12,8 +13,8 @@ extern int lineno;
 extern FILE *yyin;
 extern int emit_3ac;
 extern int emit_asm;
+extern int emit_opt;   /* <--- নতুন */
 
-/* ---------- Symbol Table ---------- */
 typedef struct {
     char name[64];
     char type[16];
@@ -55,7 +56,6 @@ void print_symbol_table(void) {
     }
 }
 
-/* ---------- IR list ---------- */
 static IRList ir;
 static int    temp_count = 0;
 
@@ -93,6 +93,8 @@ static void new_temp_name(char *buf) {
 program:
       stmt_list
       {
+          if (emit_opt) optimize_ir(&ir);  /* <--- নতুন */
+
           if (emit_3ac) {
               printf("THREE-ADDRESS CODE\n------------------\n");
               print_ir(&ir);
@@ -141,7 +143,6 @@ term:
             free($1); free($3);
       }
     | term DIV factor   {
-            /* Semantic check: Division by zero */
             if ($3[0] >= '0' && $3[0] <= '9' && atoi($3) == 0) {
                 fprintf(stderr,
                   "Semantic Error at line %d: division by zero\n",
@@ -158,7 +159,6 @@ term:
 factor:
       LPAREN expr RPAREN { $$ = $2; }
     | IDENTIFIER         {
-            /* Semantic check: Undeclared variable */
             if (!lookup($1)) {
                 fprintf(stderr,
                   "Semantic Error at line %d: variable '%s' undeclared\n",
