@@ -5,9 +5,9 @@ A small, working mini-compiler built with Flex and Bison under MSYS2 UCRT64.
 **Repository:** https://github.com/sHArmi25011991/CD_Group_MiniCompilerStraightLineC
 
 **Contributors:**
-- Sharmistha Chowdhury (@sHArmi25011991) — Leader (Lexer, main.c, codegen, README)
-- Joyeta Mallick (@joyetamallick160-source) — Parser, IR, Makefile
-- Armany Inkied (@armanyinkied-cmd) — Parser logic, Semantic checks, Tests
+- Sharmistha Chowdhury (@sHArmi25011991) — Leader (Lexer, main.c, codegen, opt.c, README)
+- Joyeta Mallick (@joyetamallick160-source) — Parser, IR, opt.h
+- Armany Inkied (@armanyinkied-cmd) — Makefile, Tests
 
 ---
 
@@ -26,6 +26,12 @@ A small, working mini-compiler built with Flex and Bison under MSYS2 UCRT64.
 - **3AC Generation:** Translates expressions into Three-Address Code using temporaries (t1, t2, etc.).
 - **Assembly Generation:** Translates 3AC into a simple pseudo-assembly using 4 registers (R0–R3).
 - Added support for `-symtab`, `-3ac`, and `-asm` flags.
+
+**Phase 3: Final Integration & Optimization (Final Phase)**
+- Fully integrated the Lexer, Parser, Symbol Table, and Code Generator into a single executable.
+- Added a Next-Use based Register Reuse optimizer (`-opt`).
+- Automated the build process using Makefile.
+- Verified the complete pipeline end-to-end.
 
 ---
 
@@ -46,11 +52,10 @@ make
 ```
 
 ### Run
-
-To run the compiler on a test file and see all stages, run:
+To run the compiler on a test file and see all stages with optimization, run:
 
 ```bash
-./compiler tests/correct03.c -tokens -symtab -3ac -asm
+./compiler tests/correct06.c -tokens -symtab -3ac -asm -opt
 ```
 
 ### Available Options
@@ -59,8 +64,9 @@ To run the compiler on a test file and see all stages, run:
 - `-symtab` : print the symbol table
 - `-3ac`    : print the Three-Address Code
 - `-asm`    : print the R0-R3 assembly output
+- `-opt`    : enable next-use based register reuse optimization
 
 ### Test Files
 
-- `tests/correct01.c` ... `correct05.c` — Accepted
+- `tests/correct01.c` ... `correct06.c` — Accepted
 - `tests/error01.c` ... `error03.c` — Rejected
