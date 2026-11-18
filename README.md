@@ -26,11 +26,17 @@ A small, working mini-compiler built with Flex and Bison under MSYS2 UCRT64.
 - **Assembly Generation:** Translates 3AC into a simple pseudo-assembly using 4 registers (R0–R3).
 - Added support for `-symtab`, `-3ac`, and `-asm` flags.
 
-**Phase 3: Final Integration & Optimization (Final Phase)**
+**Phase 3: Integration & Optimization**
 - Fully integrated the Lexer, Parser, Symbol Table, and Code Generator into a single executable.
 - Added a Next-Use based Register Reuse optimizer (`-opt`).
 - Automated the build process using Makefile.
 - Verified the complete pipeline end-to-end.
+
+**Final Phase: Register Descriptor & Final Integration (Current)**
+- Separated the final project into the `final/` folder with a clean, production-ready structure.
+- Implemented **Register Descriptors** (`-descriptor`) to show exactly which register holds which value after every instruction.
+- Confirmed 100% fulfillment of the project theme: Pseudo-Assembly Generator with R0–R3, 3AC, and Optimizer.
+- Final end-to-end verification of all test cases (correct & error handling).
 
 ---
 
@@ -44,26 +50,30 @@ pacman -S --needed mingw-w64-ucrt-x86_64-gcc flex bison make
 
 ### Build
 
-To build the compiler, run:
+To build the compiler, navigate to the final folder and run:
+
 
 ```bash
+cd final
 make
 ```
 
 ### Run
-To run the compiler on a test file and see all stages with optimization, run:
+To run the compiler on a test file and see all stages (including the new Register Descriptor) with optimization, run:
 
 ```bash
-./compiler tests/correct06.c -tokens -symtab -3ac -asm -opt
+./compiler tests/correct06.c -tokens -symtab -3ac -asm -opt -descriptor
 ```
 
 ### Available Options
 
-- `-tokens` : print the token stream
-- `-symtab` : print the symbol table
-- `-3ac`    : print the Three-Address Code
-- `-asm`    : print the R0-R3 assembly output
-- `-opt`    : enable next-use based register reuse optimization
+- `-tokens`         : print the token stream
+- `-symtab`         : print the symbol table
+- `-3ac`            : print the Three-Address Code
+- `-asm`            : print the R0-R3 assembly output
+- `-opt`            : enable next-use based register reuse optimization
+- `-descriptor`     : print the register descriptor after every instruction
+
 
 ### Test Files
 
