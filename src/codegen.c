@@ -7,6 +7,8 @@
 static char reg_desc[NREGS][64];
 static int  reg_next = 0;
 
+int emit_descriptor = 0;   /* NEW: controlled by -descriptor */
+
 static int alloc_reg(void) {
     if (reg_next >= NREGS) return -1;
     return reg_next++;
@@ -23,6 +25,19 @@ static void put_in_reg(int r, const char *name) {
 }
 
 static void clear_reg(int r) { reg_desc[r][0] = '\0'; }
+
+/* NEW: print register descriptor after every instruction */
+void print_reg_descriptor(void) {
+    if (!emit_descriptor) return;
+    printf("  [Register Descriptor] ");
+    for (int i = 0; i < NREGS; i++) {
+        if (reg_desc[i][0] == '\0')
+            printf("R%d=(empty) ", i);
+        else
+            printf("R%d=%s ", i, reg_desc[i]);
+    }
+    printf("\n");
+}
 
 void print_ir(const IRList *ir) {
     for (int i = 0; i < ir->count; i++) {
@@ -50,10 +65,12 @@ void generate_assembly(const IRList *ir) {
                 if (r1 < 0) r1 = 0;
                 printf("MOV R%d, %s\n", r1, ins->arg1);
                 put_in_reg(r1, ins->arg1);
+                print_reg_descriptor();
             }
             if (!is_dead) {
                 printf("MOV %s, R%d\n", ins->dest, r1);
                 put_in_reg(r1, ins->dest);
+                print_reg_descriptor();
             }
         } else {
             int r1 = find_in_reg(ins->arg1);
@@ -62,6 +79,7 @@ void generate_assembly(const IRList *ir) {
                 if (r1 < 0) r1 = 0;
                 printf("MOV R%d, %s\n", r1, ins->arg1);
                 put_in_reg(r1, ins->arg1);
+                print_reg_descriptor();
             }
             int r2 = find_in_reg(ins->arg2);
             if (r2 < 0) {
@@ -69,16 +87,20 @@ void generate_assembly(const IRList *ir) {
                 if (r2 < 0) r2 = NREGS - 1;
                 printf("MOV R%d, %s\n", r2, ins->arg2);
                 put_in_reg(r2, ins->arg2);
+                print_reg_descriptor();
             }
             const char *mnemonic =
                 ins->op == '+' ? "ADD" :
                 ins->op == '-' ? "SUB" :
                 ins->op == '*' ? "MUL" : "DIV";
-            printf("%s R%d, R%d\n", mnemonic, r1, r2);
-            
-            clear_reg(r2);
+
             if (!is_dead) {
+                printf("%s R%d, R%d\n", mnemonic, r1, r2);
+                clear_reg(r2);
                 put_in_reg(r1, ins->dest);
+                print_reg_descriptor();
+            } else {
+                clear_reg(r2);
             }
         }
     }
