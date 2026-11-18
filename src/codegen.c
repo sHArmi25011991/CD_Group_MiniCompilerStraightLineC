@@ -7,7 +7,11 @@
 static char reg_desc[NREGS][64];
 static int  reg_next = 0;
 
-int emit_descriptor = 0;   /* NEW: controlled by -descriptor */
+/* 
+ * NOTE: `emit_descriptor` is DEFINED in main.c. 
+ * We must NOT define it here, otherwise we get a "multiple definition" error.
+ * The `extern int emit_descriptor;` is already declared in codegen.h.
+ */
 
 static int alloc_reg(void) {
     if (reg_next >= NREGS) return -1;
@@ -26,7 +30,7 @@ static void put_in_reg(int r, const char *name) {
 
 static void clear_reg(int r) { reg_desc[r][0] = '\0'; }
 
-/* NEW: print register descriptor after every instruction */
+/* print register descriptor after every instruction */
 void print_reg_descriptor(void) {
     if (!emit_descriptor) return;
     printf("  [Register Descriptor] ");
