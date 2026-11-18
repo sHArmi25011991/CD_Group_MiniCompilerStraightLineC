@@ -5,6 +5,9 @@ BISON = bison
 TARGET = compiler
 SRC = src/parser.tab.c src/lex.yy.c src/main.c src/codegen.c src/opt.c
 
+
+all: $(TARGET)
+
 src/parser.tab.c src/parser.tab.h: src/parser.y
 >$(BISON) -d -o src/parser.tab.c src/parser.y
 
