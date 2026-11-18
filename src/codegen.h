@@ -6,4 +6,8 @@
 void print_ir(const IRList *ir);
 void generate_assembly(const IRList *ir);
 
+/* NEW: Register descriptor support */
+extern int emit_descriptor;
+void print_reg_descriptor(void);
+
 #endif
