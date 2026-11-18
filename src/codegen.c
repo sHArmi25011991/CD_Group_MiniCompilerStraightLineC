@@ -17,6 +17,7 @@ static char temp_map[MAX_TEMPS][64];
  * We must NOT define it here to avoid multiple definition errors.
  */
 
+/* Allocate a free register from R0 to R3 */
 static int alloc_reg(void) {
     if (reg_next >= NREGS) return -1;
     return reg_next++;
@@ -56,6 +57,7 @@ void print_reg_descriptor(const char *reg_val) {
     printf("\n");
 }
 
+/* Print the Three-Address Code (3AC) */
 void print_ir(const IRList *ir) {
     for (int i = 0; i < ir->count; i++) {
         const IRInstr *ins = &ir->items[i];
@@ -67,7 +69,11 @@ void print_ir(const IRList *ir) {
     }
 }
 
-/* Helper function to resolve a name. If it's a temporary like 't1', return its mapped expression (e.g., c*d) */
+/* 
+ * Helper function to resolve a name. 
+ * If it's a temporary like 't1', return its mapped expression (e.g., c*d).
+ * Otherwise, return the name as is.
+ */
 static const char* resolve_name(const char *name) {
     if (name[0] == 't' && name[1] >= '0' && name[1] <= '9') {
         int idx = atoi(name + 1);
@@ -77,7 +83,9 @@ static const char* resolve_name(const char *name) {
     return name;
 }
 
+/* Generate R0-R3 pseudo-assembly from the IR list */
 void generate_assembly(const IRList *ir) {
+    /* Initialize registers and temporary map */
     for (int i = 0; i < NREGS; i++) clear_reg(i);
     for (int i = 0; i < MAX_TEMPS; i++) temp_map[i][0] = '\0';
     reg_next = 0;
@@ -87,13 +95,16 @@ void generate_assembly(const IRList *ir) {
         int is_dead = (strcmp(ins->dest, "dead") == 0);
 
         if (ins->type == IR_ASSIGN) {
-            int r1 = find_in_reg(ins->arg1);
+            /* Resolve the real name for assignments too (e.g., a = t2 -> a = b+c*d) */
+            const char *a1 = resolve_name(ins->arg1);
+            
+            int r1 = find_in_reg(a1);
             if (r1 < 0) {
                 r1 = alloc_reg();
                 if (r1 < 0) r1 = 0;
-                printf("MOV R%d, %s\n", r1, ins->arg1);
-                put_in_reg(r1, ins->arg1);
-                print_reg_descriptor(ins->arg1);
+                printf("MOV R%d, %s\n", r1, a1);
+                put_in_reg(r1, a1);
+                print_reg_descriptor(a1);
             }
             if (!is_dead) {
                 printf("MOV %s, R%d\n", ins->dest, r1);
